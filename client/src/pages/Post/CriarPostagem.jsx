@@ -7,10 +7,11 @@ import { FormField, Loader } from '../../components';
 const CriarPostagem = () => {
 
     const navigate = useNavigate();
+
     const [form, setForm] = useState({
-        nome: '',
-        descricao: '',
-        imagem: '',
+        name: '',
+        prompt: '',
+        photo: '',
     });
 
     const [gerando, setGerando] = useState(false);
@@ -27,15 +28,38 @@ const CriarPostagem = () => {
     }
 
     const handleSupriseMe = () => {
-        const randomPrompt = getRandomPrompt(form.descricao);
+        const randomPrompt = getRandomPrompt(form.prompt);
         setForm({
             ...form,
-            descricao: randomPrompt,
+            prompt: randomPrompt,
         });
     }
 
-    const gerarImagem = () => {
-    }
+    const gerarImagem = async () => {
+        if (form.prompt) {
+            try {
+                setGerando(true);
+                const response = await fetch('http://localhost:8080/api/v1/dalle', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        prompt: form.prompt,
+                    }),
+                });
+
+                const data = await response.json();
+                setForm({ ...form, photo: `data:image/jpeg;base64,${data.photo}` });
+            } catch (err) {
+                console.log(err);
+            } finally {
+                setGerando(false);
+            }
+        } else {
+            alert('Por favor, digite um prompt valido!');
+        }
+    };
 
     return (
         <section
@@ -54,17 +78,17 @@ const CriarPostagem = () => {
             <form className='mt-16 max-w-3xl' onSubmit={handleSubmit}>
                 <div className='flex flex-col gap-5'>
                     <FormField
-                        label='Seu nome'
-                        name='titulo'
-                        value={form.nome}
-                        placeholder='Digite seu nome'
+                        label='Seu name'
+                        name='name'
+                        value={form.name}
+                        placeholder='Digite seu name'
                         type='text'
                         handleChange={handleChange}
                     />
                     <FormField
                         label='Descrição'
-                        name='descricao'
-                        value={form.descricao}
+                        name='prompt'
+                        value={form.prompt}
                         placeholder='A modern, sleek Cadillac drives along the Gardiner expressway with downtown Toronto in the background, with a lens flare, 50mm photography'
                         type='text'
                         handleChange={handleChange}
@@ -75,10 +99,10 @@ const CriarPostagem = () => {
                         text-gray-900 text-sm rounded-lg focus:ring-blue-500
                         focus:border-blue-500 w-64 p-3 h-64 flex justify-center items-center'
                     >
-                        {form.imagem ? (
+                        {form.photo ? (
                             <img
-                                src={form.imagem}
-                                alt={form.descricao}
+                                src={form.photo}
+                                alt={form.prompt}
                                 className='w-full h-full object-contain'
                             />
                         ) : (
@@ -109,9 +133,9 @@ const CriarPostagem = () => {
                 </div>
                 <div className='mt-10'>
                     <p className='mt-2 text-[#666e75] text-[16px]'>
-                        Uma vez criada a imagem, voce pode compartilhar com a comunidade!
+                        Uma vez criada a photo, voce pode compartilhar com a comunidade!
                     </p>
-                    <button 
+                    <button
                         className='mt-3 text-white bg-[#6469ff] font-medium rounded-md text-sm w-full sm:w-auto px-5 py-2.5'
                         type='submit'
                     >

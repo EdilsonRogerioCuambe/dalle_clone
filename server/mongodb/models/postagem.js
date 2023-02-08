@@ -2,15 +2,15 @@ import mongoose from "mongoose";
 
 
 const Postagem = new mongoose.Schema({
-    nome: {
+    name: {
         type: String,
         required: true
     },
-    descricao: {
+    prompt: {
         type: String,
         required: true
     },
-    imagem: {
+    photo: {
         type: String,
         required: true
     },

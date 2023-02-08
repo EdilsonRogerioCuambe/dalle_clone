@@ -6,26 +6,28 @@ dotenv.config();
 
 const router = express.Router();
 
-const configuartion = new Configuration({
+const configuration = new Configuration({
     apiKey: process.env.OPENAI_API_KEY,
-    basePath: 'https://api.openai.com/v1'
 });
 
-const openai = new OpenAIApi(configuartion);
+const openai = new OpenAIApi(configuration);
 
-router.post('/', async (req, res) => {
-    const { texto } = req.body;
-    const response = await openai.completions({
-        engine: 'davinci',
-        prompt: texto,
-        maxTokens: 100,
-        temperature: 0.7,
-        topP: 1,
-        frequencyPenalty: 0,
-        presencePenalty: 0,
-        stop: ['\n', '']
-    });
-    res.send(response.data.choices[0].text);
+router.route('/').post(async (req, res) => {
+    try {
+        const { prompt } = req.body;
+
+        const aiResponse = await openai.createImage({
+            prompt,
+            n: 1,
+            size: '1024x1024',
+            response_format: 'b64_json',
+        });
+        const image = aiResponse.data.data[0].b64_json;
+        res.status(200).json({ photo: image });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send(error?.response.data.error.message || 'Something went wrong');
+    }
 });
 
 export default router;

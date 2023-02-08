@@ -20,12 +20,12 @@ app.get('/', (req, res) => {
     res.send('Olá mundo!');
 });
 
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 8080;
 
-const server = async () => {
+const server = () => {
 
     try {
-        await connectDB(process.env.MONGODB_URL);
+        connectDB(process.env.MONGODB_URL);
         app.listen(port, () => {
             console.log(`Servidor rodando na porta ${port}`);
         });
