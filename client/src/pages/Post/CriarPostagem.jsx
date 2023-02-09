@@ -17,7 +17,31 @@ const CriarPostagem = () => {
     const [gerando, setGerando] = useState(false);
     const [loading, setLoading] = useState(false);
 
-    const handleSubmit = () => {
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        if (form.prompt && form.photo) {
+            setLoading(true);
+            try {
+                const response = await fetch('http://localhost:8080/api/v1/postagem', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(form),
+                });
+
+                await response.json();
+
+                navigate('/');
+            } catch (err) {
+                console.log(err.message);
+            } finally {
+                setLoading(false);
+            }
+        } else {
+            alert('Por favor, preencha todos os campos!');
+        }
     }
 
     const handleChange = (e) => {
@@ -27,7 +51,7 @@ const CriarPostagem = () => {
         });
     }
 
-    const handleSupriseMe = () => {
+    const handleSurpriseMe = () => {
         const randomPrompt = getRandomPrompt(form.prompt);
         setForm({
             ...form,
@@ -44,15 +68,17 @@ const CriarPostagem = () => {
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({
-                        prompt: form.prompt,
-                    }),
+                    body: JSON.stringify({ prompt: form.prompt }),
                 });
 
                 const data = await response.json();
-                setForm({ ...form, photo: `data:image/jpeg;base64,${data.photo}` });
+
+                setForm({
+                    ...form,
+                    photo: `data:image/jpeg;base64,${data.photo}`
+                });
             } catch (err) {
-                console.log(err);
+                alert(err.message)
             } finally {
                 setGerando(false);
             }
@@ -78,11 +104,11 @@ const CriarPostagem = () => {
             <form className='mt-16 max-w-3xl' onSubmit={handleSubmit}>
                 <div className='flex flex-col gap-5'>
                     <FormField
-                        label='Seu name'
-                        name='name'
+                        labelName="Seu nome"
+                        type="text"
+                        name="name"
+                        placeholder="Ex. Edilson Cuambe"
                         value={form.name}
-                        placeholder='Digite seu name'
-                        type='text'
                         handleChange={handleChange}
                     />
                     <FormField
@@ -93,11 +119,11 @@ const CriarPostagem = () => {
                         type='text'
                         handleChange={handleChange}
                         isSupriseMe
-                        handleSupriseMe={handleSupriseMe}
+                        handleSurpriseMe={handleSurpriseMe}
                     />
                     <div className='relative bg-gray-50 border border-gray-300 
                         text-gray-900 text-sm rounded-lg focus:ring-blue-500
-                        focus:border-blue-500 w-64 p-3 h-64 flex justify-center items-center'
+                        focus:border-blue-500 w-64 p-2 h-64 flex justify-center items-center'
                     >
                         {form.photo ? (
                             <img

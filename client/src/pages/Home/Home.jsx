@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 
 import { Loader, Card, FormField } from '../../components';
 
-const RenderCards = ({ data, titulo }) => {
+const RenderCards = ({ data, name }) => {
     if (data?.length > 0) return data.map((postagem) => <Card key={postagem._id} {...postagem} />);
 
     return (
         <h2 className='mt-5 font-bold text-[#6449ff] text-xl uppercase'>
-            {titulo}
+            {name}
         </h2>
     );
 }
@@ -17,6 +17,31 @@ const Home = () => {
     const [loading, setLoading] = useState(false);
     const [todosPosts, setTodosPosts] = useState(null);
     const [pesquisa, setPesquisa] = useState('');
+
+    useEffect(() => {
+        const fetchPosts = async () => {
+            setLoading(true);
+            try {
+                const response = await fetch('http://localhost:8080/api/v1/postagem', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    setTodosPosts(result.data.reverse());
+                }
+            } catch (err) {
+                console.log(err.message);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        fetchPosts();
+    }, []);
 
     return (
         <section
@@ -31,13 +56,13 @@ const Home = () => {
                 </p>
             </div>
             <div className='mt-16'>
-                <FormField/>
+                <FormField />
             </div>
             <div className='mt-10'>
                 {
                     loading ? (
                         <div className='flex justify-center items-center'>
-                            <Loader/>
+                            <Loader />
                         </div>
                     ) : (
                         <>
@@ -47,23 +72,20 @@ const Home = () => {
                                 </h2>
                             )}
                             <div className='grid lg:grid-cols-4 sm:grid-cols-3 xs:grid-cols-1 gap-3'>
-                                {
-                                    pesquisa ? (
-                                        <RenderCards 
-                                            data={todosPosts} 
-                                            titulo='Nenhum resultado encontrado'
+                                {pesquisa ? (
+                                        <RenderCards
+                                            data={todosPosts}
+                                            name='Nenhum resultado encontrado'
                                         />
                                     ) : (
-                                        <RenderCards 
-                                            data={todosPosts} 
-                                            titulo='Nenhum post encontrado'
+                                        <RenderCards
+                                            data={todosPosts}
+                                            name='Nenhum post encontrado'
                                         />
-                                    )
-                                }
+                                    )}
                             </div>
                         </>
-                    )
-                }
+                    )}
             </div>
         </section>
     )

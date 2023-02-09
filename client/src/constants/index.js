@@ -24,7 +24,7 @@ export const surpriseMePrompts = [
     'A centered explosion of colorful powder on a black background',
     'A photo of a Samoyed dog with its tongue out hugging a white Siamese cat',
     'A photo of a white fur monster standing in a purple room',
-    "A photo of Michelangelo's sculpture of David wearing headphones djing",
+    'A photo of Michelangelos sculpture of David wearing headphones djing',
     'A Samurai riding a Horse on Mars, lomography.',
     'A modern, sleek Cadillac drives along the Gardiner expressway with downtown Toronto in the background, with a lens flare, 50mm photography',
     'A realistic photograph of a young woman with blue eyes and blonde hair',
