@@ -12,11 +12,15 @@ const RenderCards = ({ data, name }) => {
     );
 }
 
+
+
 const Home = () => {
 
     const [loading, setLoading] = useState(false);
     const [todosPosts, setTodosPosts] = useState(null);
     const [pesquisa, setPesquisa] = useState('');
+    const [resultadosPesquisados, setResultadosPesquisa] = useState(null);
+    const [pesquisaTimeout, setPesquisaTimeout] = useState(null);
 
     useEffect(() => {
         const fetchPosts = async () => {
@@ -43,6 +47,24 @@ const Home = () => {
         fetchPosts();
     }, []);
 
+    const handlePesquisa = (e) => {
+        clearTimeout(pesquisaTimeout);
+
+        setPesquisa(e.target.value);
+
+        setPesquisaTimeout(
+            setTimeout(() => {
+                const resultadosPesquisa = todosPosts.filter((postagem) => postagem.name.toLowerCase().includes(pesquisa.toLowerCase())
+                    || postagem.prompt.toLowerCase().includes(pesquisa.toLowerCase()));
+                setResultadosPesquisa(resultadosPesquisa);
+            }, 500)
+        )
+    }
+
+    const handlePesquisaChange = (e) => {
+        setPesquisa(e.target.value);
+    }
+
     return (
         <section
             className='max-w-7xl mx-auto'
@@ -56,7 +78,14 @@ const Home = () => {
                 </p>
             </div>
             <div className='mt-16'>
-                <FormField />
+                <FormField
+                    label='Pesquisar'
+                    name='pesquisa'
+                    placeholder='Pesquisar prompt'
+                    value={pesquisa}
+                    type='text'
+                    handleChange={handlePesquisa}
+                />
             </div>
             <div className='mt-10'>
                 {
@@ -73,16 +102,16 @@ const Home = () => {
                             )}
                             <div className='grid lg:grid-cols-4 sm:grid-cols-3 xs:grid-cols-1 gap-3'>
                                 {pesquisa ? (
-                                        <RenderCards
-                                            data={todosPosts}
-                                            name='Nenhum resultado encontrado'
-                                        />
-                                    ) : (
-                                        <RenderCards
-                                            data={todosPosts}
-                                            name='Nenhum post encontrado'
-                                        />
-                                    )}
+                                    <RenderCards
+                                        data={resultadosPesquisados}
+                                        name='Nenhum resultado encontrado'
+                                    />
+                                ) : (
+                                    <RenderCards
+                                        data={todosPosts}
+                                        name='Nenhum post encontrado'
+                                    />
+                                )}
                             </div>
                         </>
                     )}
