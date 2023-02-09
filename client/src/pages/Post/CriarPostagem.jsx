@@ -23,7 +23,7 @@ const CriarPostagem = () => {
         if (form.prompt && form.photo) {
             setLoading(true);
             try {
-                const response = await fetch('https://dalle-yfw6.onrender.com/api/v1/postagem', {
+                const response = await fetch('http://localhost:8080/api/v1/postagem', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -63,7 +63,7 @@ const CriarPostagem = () => {
         if (form.prompt) {
             try {
                 setGerando(true);
-                const response = await fetch('https://dalle-yfw6.onrender.com/api/v1/dalle', {
+                const response = await fetch('http://localhost:8080/api/v1/dalle', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

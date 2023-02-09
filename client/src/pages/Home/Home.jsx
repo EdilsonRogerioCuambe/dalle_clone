@@ -26,7 +26,7 @@ const Home = () => {
         const fetchPosts = async () => {
             setLoading(true);
             try {
-                const response = await fetch('https://dalle-yfw6.onrender.com/api/v1/postagem', {
+                const response = await fetch('http://localhost:8080/api/v1/postagem', {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
